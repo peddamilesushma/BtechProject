@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/BtechProject/static/css/main.feeb957e.css",
+    "main.js": "/BtechProject/static/js/main.0aafa45d.js",
+    "static/js/736.aad2ab65.chunk.js": "/BtechProject/static/js/736.aad2ab65.chunk.js",
+    "static/js/787.1199a6d1.chunk.js": "/BtechProject/static/js/787.1199a6d1.chunk.js",
+    "static/js/864.be00ca9f.chunk.js": "/BtechProject/static/js/864.be00ca9f.chunk.js",
+    "index.html": "/BtechProject/index.html",
+    "main.feeb957e.css.map": "/BtechProject/static/css/main.feeb957e.css.map",
+    "main.0aafa45d.js.map": "/BtechProject/static/js/main.0aafa45d.js.map",
+    "736.aad2ab65.chunk.js.map": "/BtechProject/static/js/736.aad2ab65.chunk.js.map",
+    "787.1199a6d1.chunk.js.map": "/BtechProject/static/js/787.1199a6d1.chunk.js.map",
+    "864.be00ca9f.chunk.js.map": "/BtechProject/static/js/864.be00ca9f.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.feeb957e.css",
+    "static/js/main.0aafa45d.js"
+  ]
+}
