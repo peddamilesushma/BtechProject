@@ -1,9 +1,4 @@
-import * as React from 'react';
-import { useState } from 'react';
-import Snackbar from '@mui/material/Snackbar';
-
-
-export default function Calculation(rows){
+export default function CalculationRural(rows){
     var pcr=[]
     const Average = (arr) => {
         var sum = 0;

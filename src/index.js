@@ -1,6 +1,6 @@
 // scroll bar
 import 'simplebar/src/simplebar.css';
-
+import { RecoilRoot } from "recoil";
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
@@ -15,7 +15,9 @@ import reportWebVitals from './reportWebVitals';
 ReactDOM.render(
   <HelmetProvider>
     <BrowserRouter>
-      <App />
+      <RecoilRoot>
+        <App />
+      </RecoilRoot>
     </BrowserRouter>
   </HelmetProvider>,
   document.getElementById('root')

@@ -3,13 +3,12 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 //
-import Login from './pages/Login';
-import Register from './pages/Register';
 import DashboardApp from './pages/DashboardApp';
-import Products from './pages/Products';
+import History from './pages/history';
 import Details from './pages/Details';
-import AskConfirmationBeforeSave from './pages/Table';
-import NotFound from './pages/Page404';
+import { lazy } from 'react';
+import Loadable from './loadable';
+const AskConfirmationBeforeSave = Loadable(lazy(() => import('./pages/Table')));
 
 // ----------------------------------------------------------------------
 
@@ -21,7 +20,7 @@ export default function Router() {
       children: [
         { path: 'app', element: <DashboardApp /> },
         { path: 'user', element: <AskConfirmationBeforeSave /> },
-        { path: 'products', element: <Products /> },
+        { path: 'history', element: <History /> },
         { path: 'details', element: <Details /> }
       ]
     },
@@ -30,10 +29,6 @@ export default function Router() {
       element: <LogoOnlyLayout />,
       children: [
         { path: '/', element: <Navigate to="/dashboard/app" /> },
-        { path: 'login', element: <Login /> },
-        { path: 'register', element: <Register /> },
-        { path: '404', element: <NotFound /> },
-        { path: '*', element: <Navigate to="/404" /> }
       ]
     },
     { path: '*', element: <Navigate to="/404" replace /> }

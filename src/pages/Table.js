@@ -1,12 +1,20 @@
 import * as React from 'react';
-import { DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarExport  } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridToolbarColumnsButton, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton  } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
 import Details from './Details';
-import Calculation from "./calculation"
+import CalculationRural from "./calculationRural"
 import Result from './result';
+import { useRecoilState } from "recoil";
+import {tableData,typeData,resultData,placeData} from "../store"
+import { Stack } from '@mui/material';
+import CalculationHighway from './CalculationHighway';
+import CalculationUrban from './CalculationUrban';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+
 
 
 function CustomToolbar() {
@@ -16,39 +24,77 @@ function CustomToolbar() {
     hideFooter: true,
     hideToolbar: true,
   }} />
+    <GridToolbarColumnsButton/>
+    <GridToolbarFilterButton/>
     </GridToolbarContainer>
   );
 }
 export default function AskConfirmationBeforeSave() {
-  const [rows,setRows] = React.useState([{
-                                            id: 1,
-                                            sChainage:'1,2,3',
-                                            eChainage:"1,7,0",
-                                            cracks:"1,7,0",
-                                            rav:'1,2,3',
-                                            pot:"1,7,0",
-                                            shov:'1,2,3',
-                                            patch:'1,2,3',
-                                            dep:"1,7,0",
-                                            rut:"1,7,0",
-                                            shoulder:"good",
-                                            remarks:"remarks",
-                                        }])
-  const [count,setCount] = React.useState(1)
+  const [rows,setRows] = useRecoilState(tableData)
+  const [count,setCount] = React.useState(0)
   const [open,setOpen] = React.useState(false)
-  const [type,setType] = React.useState("rural")
+  const [type,setType] = useRecoilState(typeData)
+  const [place,setPlace] = useRecoilState(placeData)
+  const [totalResult,setTotalResult] = useRecoilState(resultData)
   const [result,setResult] = React.useState()
   const [rOpen,setROpen] = React.useState(false)
   function handleOpen(){
     setOpen(true)
   }
-  const handleResult = () =>{
-    // console.log(result)
-    setROpen(true)
+  const handleReset=() =>{
+    setRows([])
+    setResult()
+    setType("Rural")
+    setPlace("place")
   }
+  const handlePlaceChange = (event) =>{
+    setPlace(event.target.value)
+  }
+  const handleTypeChange=(event)=>{
+    setType(event.target.value)
+  }
+  const handleResult = () =>{
+    setROpen(true)
+    var tData=[];
+    for(let i=0; i< rows.length; i++){
+      var condition;
+      if(result[i] < 1.1) condition = "Poor";
+      else if(result[i] >= 1.1 && result[i] <=2.1) condition = "Fair";
+      else condition = "Good";
+      if(condition) {
+          tData.push(
+              {
+                  id:rows[i].id,
+                  sChainage:rows[i].sChainage,
+                  eChainage:rows[i].eChainage,
+                  cracks:rows[i].cracks,
+                  rav:rows[i].rav,
+                  pot:rows[i].pot,
+                  shov:rows[i].shov,
+                  patch:rows[i].patch,
+                  dep:rows[i].dep,
+                  rut:rows[i].rut,
+                  shoulder:rows[i].shoulder,
+                  remarks:rows[i].remarks,
+                  pcrValue:result[i],
+                  condition:condition
+              }
+          )
+      }}
+    if(tData.length>0){
+        var tResult={
+            data:tData,
+            type:type,
+            place:place
+        }
+        setTotalResult((totalResult) => [...totalResult,tResult])
+    }
+  }
+  console.log("totalresult",totalResult)
   const handleSubmit = async() =>{
-    console.log("hello");
-    setResult(Calculation(rows,type))
+    if(type=='Rural')setResult(CalculationRural(rows))
+    else if(type=='Highway')setResult(CalculationHighway(rows))
+    else setResult(CalculationUrban(rows))
   }
   const [snackbar, setSnackbar] = React.useState(null);
   const deleteUser = React.useCallback(
@@ -109,12 +155,30 @@ export default function AskConfirmationBeforeSave() {
     console.log("rows", rows);
   return (
     <>
-      <div  style={{ display: "flex" }}>
-      <Button style={{ marginLeft: "auto" }} onClick={handleOpen}  variant="contained">
+      <Stack spacing={{ xs:3, sm: 2, md: 4 }} direction={{ xs: 'column', sm: 'row' }} style={{justifyContent:"space-between"}}>
+      <TextField
+          select
+          required
+          label="Type of road"
+          value={type}
+          onChange={handleTypeChange}
+          sx={{width:200}}
+        >
+        <MenuItem  key="Rural" value="Rural">Rural</MenuItem >
+        <MenuItem  key="Highway" value="Highway">Highway</MenuItem >
+        <MenuItem  key="Urban" value="Urban">Urban</MenuItem>
+      </TextField>
+      <TextField
+          required
+          label="Place Name"
+          value={place}
+          onChange={handlePlaceChange}
+        />
+      <Button onClick={handleOpen}  variant="contained">
         Add Record
       </Button>
-      <Details count={count} setCount={setCount} rows={rows} open={open} setOpen={setOpen} setRows={setRows}/>
-      </div>
+      <Details count={count} setCount={setCount} open={open} setOpen={setOpen} setRows={setRows}/>
+      </Stack>
       <br />
     {(rows != [])?
     <div style={{ height: 400, width: '100%' }}>
@@ -136,13 +200,18 @@ export default function AskConfirmationBeforeSave() {
       )}
     </div>:
     <p>No Record</p>}
-    <Button onClick={handleSubmit} variant='contained'>
-      Submit
-    </Button>
-    <Button onClick={handleResult} variant='contained'>
-      Result
-    </Button>
-    {result && <Result open={rOpen} setOpen={setROpen} data={rows} type={type} reult={result} />}
+    <Stack direction="row" spacing={3}>
+      {!result && <Button onClick={handleSubmit} variant='contained'>
+        Submit
+      </Button>}
+      {result && <Button onClick={handleResult} variant='contained'>
+        Result
+      </Button>}
+      {result && <Result open={rOpen} result={result} setOpen={setROpen} />}
+      <Button onClick={handleReset} variant='contained'>
+        Reset
+      </Button>
+    </Stack>
     </>
   );
 }
