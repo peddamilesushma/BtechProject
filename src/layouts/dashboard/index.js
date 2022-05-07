@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import DashboardSidebar from './DashboardSidebar';
-
+import DashboardNavbar from './DashboardNavbar';
 // ----------------------------------------------------------------------
 
 const APP_BAR_MOBILE = 64;
@@ -34,6 +34,7 @@ export default function DashboardLayout() {
 
   return (
     <RootStyle>
+      <DashboardNavbar onOpenSidebar={() => setOpen(true)} />
       <DashboardSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
       <MainStyle>
         <Outlet />

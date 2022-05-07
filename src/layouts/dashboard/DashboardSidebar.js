@@ -4,12 +4,8 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
 import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
-// mocks_
-// import account from '../../_mocks_/account';
-// hooks
 import useResponsive from '../../hooks/useResponsive';
 // components
-import Logo from '../../components/Logo';
 import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
 //
@@ -24,14 +20,6 @@ const RootStyle = styled('div')(({ theme }) => ({
     flexShrink: 0,
     width: DRAWER_WIDTH
   }
-}));
-
-const AccountStyle = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(2, 2.5),
-  borderRadius: Number(theme.shape.borderRadius) * 1.5,
-  backgroundColor: theme.palette.grey[500_12]
 }));
 
 // ----------------------------------------------------------------------
@@ -60,8 +48,8 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column' }
       }}
     >
-      <Box sx={{ px: 2.5, py: 3, display: 'inline-flex' }}>
-        <Logo />
+      <Box sx={{ px: 2.5, py: "40%", display: 'inline-flex' }}>
+        {/* // <Logo /> */}
       </Box>
 
       <NavSection navConfig={sidebarConfig} />

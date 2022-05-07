@@ -4,15 +4,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
-import Details from './Details';
-import CalculationRural from "./calculationRural"
-import Result from './result';
+import AstmDetails from './astmDetails';
+import AstmResult from './astmResult';
 import { useRecoilState } from "recoil";
-import {tableData,typeData,resultData,placeData} from "../store"
+import {astmTableData,astmResultData,astmPlaceData} from "../store"
 import { Stack } from '@mui/material';
-import CalculationHighway from './CalculationHighway';
-import CalculationUrban from './CalculationUrban';
-import MenuItem from '@mui/material/MenuItem';
+import Astm from './astm';
 import TextField from '@mui/material/TextField';
 
 function CustomToolbar() {
@@ -27,13 +24,12 @@ function CustomToolbar() {
     </GridToolbarContainer>
   );
 }
-export default function AskConfirmationBeforeSave() {
-  const [rows,setRows] = useRecoilState(tableData)
+export default function AstmTable() {
+  const [rows,setRows] = useRecoilState(astmTableData)
   const [count,setCount] = React.useState(0)
   const [open,setOpen] = React.useState(false)
-  const [type,setType] = useRecoilState(typeData)
-  const [place,setPlace] = useRecoilState(placeData)
-  const [totalResult,setTotalResult] = useRecoilState(resultData)
+  const [place,setPlace] = useRecoilState(astmPlaceData)
+  const [totalResult,setTotalResult] = useRecoilState(astmResultData)
   const [result,setResult] = React.useState()
   const [rOpen,setROpen] = React.useState(false)
   function handleOpen(){
@@ -42,22 +38,22 @@ export default function AskConfirmationBeforeSave() {
   const handleReset=() =>{
     setRows([])
     setResult()
-    setType("Rural")
     setPlace("place")
   }
   const handlePlaceChange = (event) =>{
     setPlace(event.target.value)
-  }
-  const handleTypeChange=(event)=>{
-    setType(event.target.value)
   }
   const handleResult = () =>{
     setROpen(true)
     var tData=[];
     for(let i=0; i< rows.length; i++){
       var condition;
-      if(result[i] < 1.1) condition = "Poor";
-      else if(result[i] >= 1.1 && result[i] <=2.1) condition = "Fair";
+      if(result[i] < 10) condition = "Fail";
+      else if(result[i] >= 10 && result[i] < 25) condition = "Serious";
+      else if(result[i] >= 25 && result[i] < 40) condition = "Very Poor";
+      else if(result[i] >= 40 && result[i] < 55) condition = "Poor";
+      else if(result[i] >= 55 && result[i] < 70) condition = "Fair";
+      else if(result[i] >= 70 && result[i] < 85) condition = "Satisfactory";
       else condition = "Good";
       if(condition) {
           tData.push(
@@ -65,13 +61,23 @@ export default function AskConfirmationBeforeSave() {
                   id:rows[i].id,
                   sChainage:rows[i].sChainage,
                   eChainage:rows[i].eChainage,
-                  cracks:rows[i].cracks,
-                  rav:rows[i].rav,
-                  pot:rows[i].pot,
-                  shov:rows[i].shov,
-                  patch:rows[i].patch,
-                  dep:rows[i].dep,
-                  rut:rows[i].rut,
+                  lcracks:rows[i].lcracks,
+                  mcracks:rows[i].mcracks,
+                  hcracks:rows[i].hcracks,
+                  mrav:rows[i].mrav,
+                  mrav:rows[i].hrav,
+                  lpot:rows[i].lpot,
+                  mpot:rows[i].mpot,
+                  hpot:rows[i].hpot,
+                  lpatch:rows[i].lpatch,
+                  mpatch:rows[i].mpatch,
+                  hpatch:rows[i].hpatch,
+                  ldep:rows[i].ldep,
+                  mdep:rows[i].mdep,
+                  hdep:rows[i].hdep,
+                  ledge:rows[i].ledge,
+                  medge:rows[i].medge,
+                  hedge:rows[i].hedge,
                   shoulder:rows[i].shoulder,
                   remarks:rows[i].remarks,
                   pcrValue:result[i],
@@ -82,7 +88,6 @@ export default function AskConfirmationBeforeSave() {
     if(tData.length>0){
         var tResult={
             data:tData,
-            type:type,
             place:place
         }
         setTotalResult((totalResult) => [...totalResult,tResult])
@@ -90,9 +95,7 @@ export default function AskConfirmationBeforeSave() {
   }
   console.log("totalresult",totalResult)
   const handleSubmit = async() =>{
-    if(type=='Rural')setResult(CalculationRural(rows))
-    else if(type=='Highway')setResult(CalculationHighway(rows))
-    else setResult(CalculationUrban(rows))
+    setResult(Astm(rows))
   }
   const [snackbar, setSnackbar] = React.useState(null);
   const deleteUser = React.useCallback(
@@ -107,13 +110,23 @@ export default function AskConfirmationBeforeSave() {
     () => [
     { field: 'sChainage', headerAlign: 'center', width:150, headerName: 'Start Chainage',type: 'number', editable: true },
     { field: 'eChainage', headerAlign: 'center', width:150, headerName: 'End Chainage', type: 'number', editable: true },
-    { field: 'cracks', headerAlign: 'center', headerName: 'Cracks (%)', editable: true },
-    { field: 'rav', headerAlign: 'center', headerName: 'Ravelling (%)',  editable: true },
-    { field: 'pot', headerAlign: 'center', headerName: 'Potholes (%)',  editable: true },
-    { field: 'shov', headerAlign: 'center',headerName: 'Shoving (%)', editable: true },
-    { field: 'patch', headerAlign: 'center', width:150, headerName: 'Patch work (%)', editable: true },
-    { field: 'dep', headerAlign: 'center', headerName: 'Cracks (%)', editable: true },
-    { field: 'rut', headerAlign: 'center', headerName: 'Rut depth (%)', editable: true },
+    { field: 'lcracks', headerAlign: 'center', headerName: 'Cracks (Low)', editable: true },
+    { field: 'mcracks', headerAlign: 'center', headerName: 'Cracks(Medium)', editable: true },
+    { field: 'hcracks', headerAlign: 'center', headerName: 'Cracks (High)', editable: true },
+    { field: 'mrav', headerAlign: 'center', headerName: 'Ravelling(Medium)',  editable: true },
+    { field: 'hrav', headerAlign: 'center', headerName: 'Ravelling(High)',  editable: true },
+    { field: 'lpot', headerAlign: 'center', headerName: 'Potholes(Low)',  editable: true },
+    { field: 'mpot', headerAlign: 'center', headerName: 'Potholes(Medium)',  editable: true },
+    { field: 'hpot', headerAlign: 'center', headerName: 'Potholes(High)',  editable: true },
+    { field: 'ledge', headerAlign: 'center',headerName: 'edge(Low)', editable: true },
+    { field: 'medge', headerAlign: 'center',headerName: 'edge(Medium)', editable: true },
+    { field: 'hedge', headerAlign: 'center',headerName: 'edge(High)', editable: true },
+    { field: 'lpatch', headerAlign: 'center', width:150, headerName: 'Patch work(Low)', editable: true },
+    { field: 'mpatch', headerAlign: 'center', width:150, headerName: 'Patch work(Medium)', editable: true },
+    { field: 'hpatch', headerAlign: 'center', width:150, headerName: 'Patch work(High)', editable: true },
+    { field: 'ldep', headerAlign: 'center', headerName: 'Depresssion(Low)', editable: true },
+    { field: 'mdep', headerAlign: 'center', headerName: 'Depression(Medium)', editable: true },
+    { field: 'hdep', headerAlign: 'center', headerName: 'Depression(High)', editable: true },
     { field: 'shoulder', headerAlign: 'center', width:150, headerName: 'Shoulder condition', editable: true },
     { field: 'remarks', headerAlign: 'center', headerName: 'Remarks', editable: true },
     {
@@ -153,19 +166,7 @@ export default function AskConfirmationBeforeSave() {
     console.log("rows", rows);
   return (
     <>
-      <Stack spacing={{ xs:3, sm: 2, md: 4 }} direction={{ xs: 'column', sm: 'row' }} style={{justifyContent:"space-between"}}>
-      <TextField
-          select
-          required
-          label="Type of road"
-          value={type}
-          onChange={handleTypeChange}
-          sx={{width:200}}
-        >
-        <MenuItem  key="Rural" value="Rural">Rural</MenuItem >
-        <MenuItem  key="Highway" value="Highway">Highway</MenuItem >
-        <MenuItem  key="Urban" value="Urban">Urban</MenuItem>
-      </TextField>
+      <Stack direction="row" style={{justifyContent:"space-between"}}>
       <TextField
           required
           label="Place Name"
@@ -175,7 +176,7 @@ export default function AskConfirmationBeforeSave() {
       <Button onClick={handleOpen}  variant="contained">
         Add Record
       </Button>
-      <Details count={count} setCount={setCount} open={open} setOpen={setOpen} setRows={setRows}/>
+      <AstmDetails count={count} setCount={setCount} open={open} setOpen={setOpen} setRows={setRows}/>
       </Stack>
       <br />
     {(rows != [])?
@@ -205,7 +206,7 @@ export default function AskConfirmationBeforeSave() {
       {result && <Button onClick={handleResult} variant='contained'>
         Result
       </Button>}
-      {result && <Result open={rOpen} result={result} setOpen={setROpen} />}
+      {result && <AstmResult open={rOpen} result={result} setOpen={setROpen} />}
       <Button onClick={handleReset} variant='contained'>
         Reset
       </Button>

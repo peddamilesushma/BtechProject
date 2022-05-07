@@ -11,38 +11,41 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { useRecoilValue,useRecoilState } from "recoil";
-import { tableData,typeData,placeData,resultData } from 'src/store';
+import { useRecoilValue } from "recoil";
+import { astmTableData,astmPlaceData } from 'src/store';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
-export default function Result(props){
-    const data = useRecoilValue(tableData);
-    const type = useRecoilValue(typeData);
-    const place = useRecoilValue(placeData);
+export default function AstmResult(props){
+    const data = useRecoilValue(astmTableData);
+    const place = useRecoilValue(astmPlaceData);
     const result = props.result;
     const setOpen=props.setOpen;
     const open=props.open;
     const rows = []
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-    console.log(props)
+    // console.log("props",props)
     function handleClose(){
         setOpen(false)
     }
     for(let i=0; i< data.length; i++){
-        console.log("result",result)
+        console.log("hi")
+        // console.log("result",result)
         var condition;
-        if(result[i] < 1.1) condition = "Poor";
-        else if(result[i] >= 1.1 && result[i] <=2.1) condition = "Fair";
+        if(result[i] < 10) condition = "Fail";
+        else if(result[i] >= 10 && result[i] < 25) condition = "Serious";
+        else if(result[i] >= 25 && result[i] < 40) condition = "Very Poor";
+        else if(result[i] >= 40 && result[i] < 55) condition = "Poor";
+        else if(result[i] >= 55 && result[i] < 70) condition = "Fair";
+        else if(result[i] >= 70 && result[i] < 85) condition = "Satisfactory";
         else condition = "Good";
         if(condition) {
             rows.push(
             {
                 sChainage:data[i].sChainage,
                 eChainage:data[i].eChainage,
-                type:type,
                 place:place,
                 pcrValue:result[i],
                 condition:condition,
@@ -54,9 +57,8 @@ export default function Result(props){
     const columns =[
         { id: 'sChainage', label: 'Start Chainage'},
         { id: 'eChainage', label: 'End chainage'},
-        {id: 'type', label:"Type of road"},
         {id: 'place', label:"place Name"},
-        { id: 'pcrValue', label: 'PCR Value'},
+        { id: 'pcrValue', label: 'PCI Value'},
         { id: 'condition',label: 'Pavement Condition'},
         { id: 'shoulder', label: 'Shoulder condition'},
         { id: 'remarks', label: 'Remarks'},
@@ -75,9 +77,8 @@ export default function Result(props){
                 <TableRow>
                     <TableCell>Start Chainage</TableCell>
                     <TableCell align="right">End chainage</TableCell>
-                    <TableCell align="right">Type of Road</TableCell>
                     <TableCell align="right">Place Name</TableCell>
-                    <TableCell align="right">PCR Value</TableCell>
+                    <TableCell align="right">PCI Value</TableCell>
                     <TableCell align="right">Pavement Condition</TableCell>
                     <TableCell align="right">Shoulder condition</TableCell>
                     <TableCell align="right">Remarks</TableCell>
@@ -93,7 +94,6 @@ export default function Result(props){
                         {row.sChainage}
                     </TableCell>
                     <TableCell align="right">{row.eChainage}</TableCell>
-                    <TableCell align="right">{row.type}</TableCell>
                     <TableCell align="right">{row.place}</TableCell>
                     <TableCell align="right">{row.pcrValue}</TableCell>
                     <TableCell align="right">{row.condition}</TableCell>

@@ -26,6 +26,7 @@ export default function Details(props){
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const handleClose = () => {
+        setAdd(false);
         setOpen(false);
       };
     const formik = useFormik({
@@ -304,6 +305,7 @@ export default function Details(props){
                     Reset
                 </Button>
                 <Button onClick={ e => {
+                                        setAdd(false);
                                         setOpen(false);
                                         formik.resetForm()}} variant="contained">
                     Close

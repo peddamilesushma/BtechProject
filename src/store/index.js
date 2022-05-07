@@ -10,6 +10,11 @@ export const tableData= atom({
     default:[],
     effects_UNSTABLE: [persistAtom],
 })
+export const astmTableData= atom({
+    key:"astmTableDataList",
+    default:[],
+    effects_UNSTABLE: [persistAtom],
+})
 export const typeData= atom({
     key:"typeDataList",
     default:"Rural",
@@ -22,6 +27,16 @@ export const placeData= atom({
 })
 export const resultData=atom({
     key: "resultDataList",
+    default:[],
+    effects_UNSTABLE: [persistAtom],
+})
+export const astmPlaceData= atom({
+    key:"astmPlaceDataList",
+    default:"place",
+    effects_UNSTABLE: [persistAtom],
+})
+export const astmResultData=atom({
+    key: "astmResultDataList",
     default:[],
     effects_UNSTABLE: [persistAtom],
 })
